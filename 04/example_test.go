@@ -13,3 +13,13 @@ func ExampleStar1FullyContain() {
 	// output:
 	// 496
 }
+
+func ExampleStar2Overlapping() {
+	c, err := Star2Overlapping()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(c)
+	// output:
+	// 496
+}

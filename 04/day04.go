@@ -9,6 +9,18 @@ import (
 )
 
 func Star1FullyContain() (int, error) {
+	return commonApproach(func(p Pair) bool {
+		return p.OneContainsTheOther()
+	})
+}
+
+func Star2Overlapping() (int, error) {
+	return commonApproach(func(p Pair) bool {
+		return p.areOverlapping()
+	})
+}
+
+func commonApproach(f func(Pair) bool) (int, error) {
 	input, err := os.Open("input.txt")
 	if err != nil {
 		return 0, err
@@ -26,7 +38,7 @@ func Star1FullyContain() (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		if p.OneContainsTheOther() {
+		if f(p) {
 			count += 1
 		}
 	}
@@ -50,6 +62,15 @@ type Range struct {
 func (p Pair) OneContainsTheOther() bool {
 	firstWay := p.FirstRange.Min <= p.SecondRange.Min && p.FirstRange.Max >= p.SecondRange.Max
 	secondWay := p.SecondRange.Min <= p.FirstRange.Min && p.SecondRange.Max >= p.FirstRange.Max
+	return firstWay || secondWay
+}
+
+func (p Pair) areOverlapping() bool {
+	if p.OneContainsTheOther() {
+		return true
+	}
+	firstWay := p.FirstRange.Min <= p.SecondRange.Min && p.FirstRange.Max >= p.SecondRange.Min
+	secondWay := p.SecondRange.Min <= p.FirstRange.Min && p.SecondRange.Max >= p.FirstRange.Min
 	return firstWay || secondWay
 }
 
