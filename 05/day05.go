@@ -8,7 +8,9 @@ import (
 	"strings"
 )
 
-func Star1TopCrateList() (string, error) {
+type CrateMover func(stacks [][]rune, quantity, from, to int) ([][]rune, error)
+
+func TopCrateListWithCrateMover(mover CrateMover) (string, error) {
 	input, err := os.Open("input.txt")
 	if err != nil {
 		return "", err
@@ -35,19 +37,15 @@ func Star1TopCrateList() (string, error) {
 		return "", err
 	}
 	stacks := parseCraneLinesToStacks(craneLines)
-	// fmt.Println(string(stacks[3]))
-	// fmt.Println(string(stacks[len(stacks)-1]))
-	// fmt.Println("THEN movements")
 	for _, line := range moveLines {
 		quantity, from, to, err := parseMove(line)
 		if err != nil {
 			return "", err
 		}
-		stacks, err = doMove(stacks, quantity, from, to)
+		stacks, err = mover(stacks, quantity, from, to)
 		if err != nil {
 			return "", err
 		}
-		// fmt.Println(string(stacks[3]))
 	}
 	fmt.Println(topCrateList(stacks))
 	return "", nil
@@ -110,7 +108,7 @@ func parseMove(line string) (int, int, int, error) {
 	return quantity, from - 1, to - 1, nil
 }
 
-func doMove(stacks [][]rune, quantity, from, to int) ([][]rune, error) {
+func doMoveWithCrateMover9000(stacks [][]rune, quantity, from, to int) ([][]rune, error) {
 	if len(stacks[from]) < quantity {
 		return nil, fmt.Errorf("not enough crane")
 	}
@@ -119,6 +117,18 @@ func doMove(stacks [][]rune, quantity, from, to int) ([][]rune, error) {
 		stacks[from] = s
 		stacks[to] = append([]rune{c}, stacks[to]...)
 	}
+	return stacks, nil
+}
+
+func doMoveWithCrateMover9001(stacks [][]rune, quantity, from, to int) ([][]rune, error) {
+	if len(stacks[from]) < quantity {
+		return nil, fmt.Errorf("not enough crane")
+	}
+	head, tail := stacks[from][:quantity], stacks[from][quantity:]
+	stacks[from] = tail
+	headCopy := make([]rune, len(head))
+	copy(headCopy, head)
+	stacks[to] = append(headCopy, stacks[to]...)
 	return stacks, nil
 }
 
